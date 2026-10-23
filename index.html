@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#14263d">
+    <meta name="description" content="SilverForge is a non-custodial developer preview for creating EVM tokens and Solana SPL tokens with your own wallet.">
+    <title>SilverForge Studio · Silver Labs</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#creator">Skip to token creator</a>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="SilverForge Studio home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span><strong>SilverForge</strong><small>by Silver Labs</small></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#creator">Create</a>
+        <a href="#networks">Networks</a>
+        <a href="#silvex">SilvEx</a>
+        <a href="#security">Security</a>
+      </nav>
+      <span class="preview-badge">DEVELOPER PREVIEW</span>
+    </header>
+
+    <main id="home">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot"></span> NON-CUSTODIAL TOKEN TOOLING</p>
+          <h1>Create tokens.<br><span>Keep control.</span></h1>
+          <p>Configure an EVM token or Solana SPL mint and review the exact transaction in your own wallet. SilverForge never asks for a seed phrase or private key.</p>
+          <a class="button button-primary" href="#creator">Open token creator <span aria-hidden="true">↓</span></a>
+          <p class="hero-caveat">Experimental software. Use test networks first. You are responsible for the transaction your wallet signs.</p>
+        </div>
+        <div class="hero-panel" aria-label="Supported token standards">
+          <div class="hero-panel-top"><span>SUPPORTED FLOWS</span><span class="pulse"></span></div>
+          <div class="standard-row"><span class="standard-symbol">Ξ</span><div><strong>ERC-20</strong><small>Ethereum · Sepolia</small></div><span class="standard-tag">EVM</span></div>
+          <div class="standard-row"><span class="standard-symbol">B</span><div><strong>BEP-20 compatible</strong><small>BNB Chain · BSC Testnet</small></div><span class="standard-tag">EVM</span></div>
+          <div class="standard-row"><span class="standard-symbol">◎</span><div><strong>SPL Token</strong><small>Solana · Devnet</small></div><span class="standard-tag">SOLANA</span></div>
+          <div class="hero-panel-foot">BTCS L2 <span>Integration under development</span></div>
+        </div>
+      </section>
+
+      <section class="creator-section section" id="creator">
+        <div class="section-heading">
+          <div><p class="eyebrow">TOKEN WORKSPACE</p><h2>Configure your asset</h2></div>
+          <p class="section-description">Deployments are real wallet transactions on the selected network. The form does not create or hold signing credentials.</p>
+        </div>
+
+        <div class="workspace">
+          <form id="token-form" novalidate>
+            <div class="form-section">
+              <div class="form-section-title"><span>01</span><div><h3>Network and wallet</h3><p>Choose a chain, then connect a compatible wallet.</p></div></div>
+              <label for="network-select">Network</label>
+              <select id="network-select" name="network" required></select>
+              <div class="network-note" id="network-note" role="status"></div>
+              <div class="wallet-row">
+                <div><strong id="wallet-state">Wallet not connected</strong><small id="wallet-detail">No wallet connection has been requested.</small></div>
+                <button class="button button-secondary" id="wallet-button" type="button">Connect wallet</button>
+              </div>
+              <div class="network-control hidden" id="network-control">
+                <p id="network-mismatch">Your wallet is connected to a different network.</p>
+                <button class="button button-secondary" id="switch-network" type="button">Switch wallet network</button>
+              </div>
+              <div class="rpc-control hidden" id="rpc-control">
+                <label for="solana-rpc">Solana RPC endpoint</label>
+                <input id="solana-rpc" type="url" inputmode="url" autocomplete="url">
+                <small>Public endpoints can be rate-limited. This URL is used only in your browser; do not enter a provider URL containing a secret key.</small>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title"><span>02</span><div><h3>Token details</h3><p>The EVM flow creates a fixed-supply token; SPL flow creates a mint with initial supply.</p></div></div>
+              <div class="field-grid">
+                <div><label for="token-name">Token name</label><input id="token-name" name="name" maxlength="64" autocomplete="off" required placeholder="Example Token"></div>
+                <div><label for="token-symbol">Symbol</label><input id="token-symbol" name="symbol" maxlength="10" autocomplete="off" required placeholder="EXM"></div>
+                <div><label for="token-decimals">Decimals <span id="decimals-hint">(0–18)</span></label><input id="token-decimals" name="decimals" type="number" min="0" max="18" step="1" value="18" required></div>
+                <div><label for="token-supply">Initial whole-token supply</label><input id="token-supply" name="supply" type="number" min="1" step="1" required placeholder="1000000"></div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title"><span>03</span><div><h3>Logo and metadata</h3><p>Choose an image. Static hosting does not persist or upload files.</p></div></div>
+              <label class="upload-zone" for="logo-file">
+                <input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp" required>
+                <span class="upload-icon" aria-hidden="true">↑</span>
+                <strong id="upload-label">Choose a token logo</strong>
+                <small>PNG, JPEG or WebP · up to 5 MB · square image recommended</small>
+              </label>
+              <img class="logo-preview hidden" id="logo-preview" alt="Preview of selected token logo">
+              <div class="field-grid metadata-fields">
+                <div><label for="logo-url">Public logo URL <span class="optional">optional for EVM</span></label><input id="logo-url" type="url" inputmode="url" placeholder="https://…"></div>
+                <div class="solana-only hidden"><label for="metadata-url">Public metadata JSON URL <span class="required">required for SPL</span></label><input id="metadata-url" type="url" inputmode="url" placeholder="https://…/metadata.json"></div>
+              </div>
+              <p class="field-help">Host the logo and metadata using storage you control (for example, an IPFS pinning service). SilverForge has no upload backend and does not store or pin files. <button class="text-button" id="download-metadata" type="button">Download metadata JSON</button></p>
+            </div>
+
+            <div class="form-actions">
+              <button class="button button-primary" id="review-button" type="submit">Review transaction</button>
+              <span>Nothing is sent until you confirm in your wallet.</span>
+            </div>
+          </form>
+
+          <aside class="review-panel" id="review-panel" aria-live="polite">
+            <div class="review-heading"><span class="review-icon" aria-hidden="true">✓</span><div><p class="eyebrow">TRANSACTION REVIEW</p><h3 id="review-title">Review before signing</h3></div></div>
+            <p id="review-empty">Select a network, connect your wallet and complete the required fields. SilverForge will estimate the transaction before asking you to sign.</p>
+            <dl class="review-data hidden" id="review-data">
+              <div><dt>Token</dt><dd id="review-token"></dd></div>
+              <div><dt>Network</dt><dd id="review-network"></dd></div>
+              <div><dt>Supply</dt><dd id="review-supply"></dd></div>
+              <div><dt>Recipient / authority</dt><dd id="review-owner"></dd></div>
+              <div><dt>Estimated network cost</dt><dd id="review-cost"></dd></div>
+            </dl>
+            <p class="notice notice-warning">Inspect the network and fee in your wallet. Token creation cannot be reversed. Mainnet deployments use real funds for network fees.</p>
+            <button class="button button-primary button-full hidden" id="confirm-deploy" type="button">Confirm and deploy</button>
+            <div class="result-panel hidden" id="deployment-result" role="status"></div>
+            <div class="status-message" id="status-message" role="alert" aria-live="assertive"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="networks-section section" id="networks">
+        <div class="section-heading"><div><p class="eyebrow">NETWORK SUPPORT</p><h2>Different chains, explicit boundaries</h2></div></div>
+        <div class="network-cards">
+          <article><span class="network-icon">Ξ</span><p class="status-pill status-active">Wallet deployment flow</p><h3>Ethereum</h3><p>ERC-20-compatible contracts are deployed with the connected EVM wallet. Sepolia is recommended for development; mainnet requires ETH for gas.</p></article>
+          <article><span class="network-icon">B</span><p class="status-pill status-active">Wallet deployment flow</p><h3>BNB Smart Chain</h3><p>The same ERC-20 interface is BEP-20-compatible. BSC and BSC Testnet are separate deployments and use BNB for gas.</p></article>
+          <article><span class="network-icon">◎</span><p class="status-pill status-active">SPL mint flow</p><h3>Solana</h3><p>Creates a classic SPL Token mint and Metaplex token metadata. Your connected Solana wallet signs; SOL pays rent and transaction fees.</p></article>
+          <article class="network-card-muted"><span class="network-icon">L2</span><p class="status-pill status-planned">Under development</p><h3>BTCS L2</h3><p>BTCS L2 is not selectable and has no verified SilverForge deployment integration in this static frontend.</p></article>
+        </div>
+      </section>
+
+      <section class="integration-section section" id="silvex">
+        <div class="integration-copy"><p class="eyebrow">ECOSYSTEM DESTINATION</p><h2>Creation here.<br><span>Exchange elsewhere.</span></h2><p>SilverForge creates tokens; it does not list, trade, swap, or provide markets. SilvEx is a separate planned exchange destination and currently has no verified supported market to link to.</p><p class="integration-note">Centralized exchange services and decentralized exchange protocols are distinct systems with separate custody and security models.</p></div>
+        <div class="integration-card"><span class="integration-mark">S</span><h3>SilvEx</h3><p>Planned · no trading or market endpoint is available in this preview.</p><a href="https://github.com/Silver-Labs-Technology-Development" target="_blank" rel="noopener noreferrer">Silver Labs organization <span aria-hidden="true">↗</span></a></div>
+      </section>
+
+      <section class="security-section section" id="security">
+        <div><p class="eyebrow">SECURITY AND HOSTING</p><h2>Browser-side by design.<br><span>Honest about the edges.</span></h2></div>
+        <div class="security-grid">
+          <article><h3>Wallets keep the keys</h3><p>SilverForge requests public account access and transaction signatures from compatible wallets. It never asks for or stores private keys or seed phrases.</p></article>
+          <article><h3>Static site, no secret backend</h3><p>GitHub Pages serves static files only. Public RPC access, wallet extensions and user-selected public metadata storage are external dependencies. Do not put API credentials into the site or browser.</p></article>
+          <article><h3>Review and test first</h3><p>Use testnets while learning. Contract deployments are irreversible and require network fees; verify bytecode, supply and target network before signing.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer><a class="brand footer-brand" href="#home"><span class="brand-mark" aria-hidden="true">S</span><span><strong>SilverForge</strong><small>by Silver Labs</small></span></a><p>Developer preview · BTCS L2 integration under development</p><a href="https://github.com/Silver-Labs-Technology-Development" target="_blank" rel="noopener noreferrer">Silver Labs on GitHub ↗</a></footer>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
