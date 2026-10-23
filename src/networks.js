@@ -43,6 +43,19 @@ export const networks = {
     testnet: true,
     chainName: 'BNB Smart Chain Testnet',
   },
+  'btcs-l2-local': {
+    id: 'btcs-l2-local',
+    family: 'evm',
+    name: 'BTCS L2 Local',
+    chainId: 31337,
+    symbol: 'BTCS',
+    rpcUrl: 'http://127.0.0.1:8545',
+    explorer: null,
+    testnet: true,
+    localDevelopment: true,
+    clientVersionPrefix: 'BTCSL2/',
+    chainName: 'BTCS L2 Local Development',
+  },
   solana: {
     id: 'solana',
     family: 'solana',
@@ -79,6 +92,7 @@ export function explorerUrl(network, kind, value) {
     const cluster = network.cluster === 'mainnet-beta' ? '' : `?cluster=${encodeURIComponent(network.cluster)}`
     return `${network.explorer}/${kind}/${encodeURIComponent(value)}${cluster}`
   }
+  if (!network.explorer) return null
   return `${network.explorer}/${kind}/${encodeURIComponent(value)}`
 }
 

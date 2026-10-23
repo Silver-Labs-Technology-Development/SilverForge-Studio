@@ -11,6 +11,7 @@ const state = {
   evmAccount: null,
   solanaWallet: null,
   solanaAccount: null,
+  evmClientVersion: null,
   logoFile: null,
   logoObjectUrl: null,
   draft: null,
@@ -72,28 +73,39 @@ function currentAccount(network = getNetwork()) {
 
 function isNetworkReady(network = getNetwork()) {
   if (network.family === 'solana') return isWalletConnected(network)
-  return Boolean(state.evmProvider && isSupportedEvmChain(network, state.evmChainId))
+  const correctChain = Boolean(state.evmProvider && isSupportedEvmChain(network, state.evmChainId))
+  if (network.localDevelopment) {
+    return correctChain && state.evmClientVersion?.startsWith(network.clientVersionPrefix)
+  }
+  return correctChain
 }
 
 function showNetworkInfo() {
   const network = getNetwork()
   const options = Object.values(networks)
-    .map((item) => `<option value="${item.id}" ${item.id === state.networkId ? 'selected' : ''}>${item.name}${item.testnet ? ' · testnet' : ' · mainnet'}</option>`)
+    .map((item) => {
+      const environment = item.localDevelopment ? 'local development' : item.testnet ? 'testnet' : 'mainnet'
+      return `<option value="${item.id}" ${item.id === state.networkId ? 'selected' : ''}>${item.name} · ${environment}</option>`
+    })
     .join('')
-  networkSelect.innerHTML = `${options}<option value="btcs-l2" disabled>BTCS L2 · under development</option>`
-  const testnetNote = network.testnet
+  networkSelect.innerHTML = `${options}`
+  const networkLabel = network.localDevelopment
+    ? 'Local development network. Use isolated local test funds only.'
+    : network.testnet
     ? 'Test network selected. Use test funds only; explorers and RPC services may be rate-limited.'
     : 'Mainnet selected. Deployment is irreversible and wallet network fees use real funds.'
   element('network-note').textContent = network.family === 'solana'
-    ? `${testnetNote} Select your Solana RPC endpoint below if the public default is unavailable.`
-    : `${testnetNote} Your EVM wallet must be on this exact chain before review.`
+    ? `${networkLabel} Select your Solana RPC endpoint below if the public default is unavailable.`
+    : network.localDevelopment
+      ? `${networkLabel} The RPC must identify as BTCS L2; an unrelated chain with ID 31337 is rejected. Start the local RPC with the development sequencer enabled.`
+      : `${networkLabel} Your EVM wallet must be on this exact chain before review.`
   element('rpc-control').classList.toggle('hidden', network.family !== 'solana')
   element('solana-rpc').value = network.rpcUrl
   element('solana-rpc').placeholder = network.rpcUrl
   document.querySelectorAll('.solana-only').forEach((node) => node.classList.toggle('hidden', network.family !== 'solana'))
   element('token-decimals').max = network.family === 'solana' ? '9' : '18'
   element('token-decimals').value = network.family === 'solana' && Number(element('token-decimals').value) > 9 ? '9' : element('token-decimals').value
-  element('decimals-hint').textContent = network.family === 'solana' ? '(0–9 for this flow)' : '(0–18)'
+  element('decimals-hint').textContent = network.family === 'solana' ? '(0–9 for this flow)' : network.localDevelopment ? '(0–18 for BTCS L2 local)' : '(0–18)'
   element('wallet-button').textContent = network.family === 'evm' ? 'Connect EVM wallet' : 'Connect Solana wallet'
   element('network-control').classList.toggle('hidden', network.family !== 'evm' || !state.evmProvider || isNetworkReady(network))
   element('switch-network').textContent = `Switch to ${network.name}`
@@ -111,7 +123,11 @@ function updateWalletInfo() {
   const network = getNetwork()
   if (network.family === 'evm' && state.evmAccount) {
     element('wallet-state').textContent = `${state.evmAccount.slice(0, 6)}…${state.evmAccount.slice(-4)}`
-    element('wallet-detail').textContent = isNetworkReady(network) ? `${network.name} connected` : `Connected, but not on ${network.name}.`
+    element('wallet-detail').textContent = isNetworkReady(network)
+      ? `${network.name} connected`
+      : network.localDevelopment && state.evmChainId === network.chainId
+        ? 'Chain ID matches, but the BTCS L2 RPC identity is not verified.'
+        : `Connected, but not on ${network.name}.`
     element('network-control').classList.toggle('hidden', isNetworkReady(network))
   } else if (network.family === 'solana' && state.solanaAccount) {
     const address = state.solanaAccount.toBase58()
@@ -160,18 +176,22 @@ function renderResult(network, result) {
   heading.textContent = 'Deployment confirmed'
   const addressLabel = document.createElement('span')
   addressLabel.textContent = 'Token address / mint'
-  const addressLink = document.createElement('a')
-  addressLink.href = result.addressUrl
-  addressLink.target = '_blank'
-  addressLink.rel = 'noopener noreferrer'
+  const addressLink = result.addressUrl ? document.createElement('a') : document.createElement('code')
   addressLink.textContent = result.address
+  if (result.addressUrl) {
+    addressLink.href = result.addressUrl
+    addressLink.target = '_blank'
+    addressLink.rel = 'noopener noreferrer'
+  }
   const txLabel = document.createElement('span')
   txLabel.textContent = 'Transaction'
-  const txLink = document.createElement('a')
-  txLink.href = result.transactionUrl
-  txLink.target = '_blank'
-  txLink.rel = 'noopener noreferrer'
+  const txLink = result.transactionUrl ? document.createElement('a') : document.createElement('code')
   txLink.textContent = result.transactionHash
+  if (result.transactionUrl) {
+    txLink.href = result.transactionUrl
+    txLink.target = '_blank'
+    txLink.rel = 'noopener noreferrer'
+  }
   container.append(heading, addressLabel, addressLink, txLabel, txLink)
   if (result.blockNumber !== undefined) {
     const block = document.createElement('span')
@@ -202,6 +222,14 @@ async function connectEvmWallet() {
   state.evmAccount = accounts[0]
   const chain = await state.evmProvider.getNetwork()
   state.evmChainId = Number(chain.chainId)
+  state.evmClientVersion = null
+  if (getNetwork().localDevelopment && state.evmChainId === getNetwork().chainId) {
+    try {
+      state.evmClientVersion = await state.evmProvider.send('web3_clientVersion', [])
+    } catch {
+      state.evmClientVersion = null
+    }
+  }
   window.ethereum.removeListener?.('chainChanged', onEvmChainChanged)
   window.ethereum.removeListener?.('accountsChanged', onEvmAccountsChanged)
   window.ethereum.on?.('chainChanged', onEvmChainChanged)
@@ -217,6 +245,15 @@ async function connectEvmWallet() {
 
 async function onEvmChainChanged(chainIdHex) {
   state.evmChainId = Number.parseInt(chainIdHex, 16)
+  state.evmClientVersion = null
+  const network = getNetwork()
+  if (network.localDevelopment && state.evmChainId === network.chainId) {
+    try {
+      state.evmClientVersion = await state.evmProvider.send('web3_clientVersion', [])
+    } catch {
+      state.evmClientVersion = null
+    }
+  }
   clearDraft()
   updateWalletInfo()
   if (!isNetworkReady()) element('network-control').classList.remove('hidden')
@@ -244,7 +281,7 @@ async function switchEvmNetwork() {
         chainName: network.chainName,
         nativeCurrency: { name: network.symbol, symbol: network.symbol, decimals: 18 },
         rpcUrls: [network.rpcUrl],
-        blockExplorerUrls: [network.explorer],
+        ...(network.explorer ? { blockExplorerUrls: [network.explorer] } : {}),
       }],
     })
   }
@@ -252,6 +289,10 @@ async function switchEvmNetwork() {
   const chain = await provider.getNetwork()
   state.evmProvider = provider
   state.evmChainId = Number(chain.chainId)
+  state.evmClientVersion = null
+  if (network.localDevelopment) {
+    state.evmClientVersion = await provider.send('web3_clientVersion', [])
+  }
   clearDraft()
   updateWalletInfo()
   if (isNetworkReady()) setStatus(`Wallet switched to ${network.name}.`, 'success')
@@ -446,7 +487,10 @@ async function downloadMetadata() {
 
 function initialize() {
   networkSelect.innerHTML = Object.values(networks)
-    .map((network) => `<option value="${network.id}">${network.name}${network.testnet ? ' · testnet' : ' · mainnet'}</option>`)
+    .map((network) => {
+      const environment = network.localDevelopment ? 'local development' : network.testnet ? 'testnet' : 'mainnet'
+      return `<option value="${network.id}">${network.name} · ${environment}</option>`
+    })
     .join('')
   networkSelect.value = defaultNetworkId
   element('solana-rpc').value = networks['solana-devnet'].rpcUrl

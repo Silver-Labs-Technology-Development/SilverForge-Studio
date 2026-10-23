@@ -38,6 +38,9 @@ test('logo validation checks actual file signature and metadata contains only pu
 test('network identity and explorer links remain chain-specific', () => {
   assert.equal(isSupportedEvmChain(networks.ethereum, 1n), true)
   assert.equal(isSupportedEvmChain(networks.bsc, 1n), false)
+  assert.equal(isSupportedEvmChain(networks['btcs-l2-local'], 31337n), true)
+  assert.equal(networks['btcs-l2-local'].localDevelopment, true)
+  assert.equal(explorerUrl(networks['btcs-l2-local'], 'tx', '0xabc'), null)
   assert.equal(explorerUrl(networks['solana-devnet'], 'address', 'Mint111'), 'https://explorer.solana.com/address/Mint111?cluster=devnet')
   assert.equal(explorerUrl(networks.bsc, 'tx', '0xabc'), 'https://bscscan.com/tx/0xabc')
   assert.equal(safeRpcUrl('https://rpc.example/'), true)

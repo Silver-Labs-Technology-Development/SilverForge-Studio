@@ -2,11 +2,28 @@ import { ContractFactory, formatEther } from 'ethers'
 import { explorerUrl, isSupportedEvmChain } from './networks.js'
 import { parseWholeTokenSupply } from './validation.js'
 
+export async function verifyEvmNetworkIdentity(provider, network) {
+  if (!network.localDevelopment) return
+
+  const [networkVersion, clientVersion] = await Promise.all([
+    provider.send('net_version', []),
+    provider.send('web3_clientVersion', []),
+  ])
+  if (networkVersion !== String(network.chainId) ||
+      typeof clientVersion !== 'string' ||
+      !clientVersion.startsWith(network.clientVersionPrefix)) {
+    throw new Error(
+      `The RPC endpoint is not the expected BTCS L2 local node (chain ${network.chainId}, client ${network.clientVersionPrefix}). No transaction was prepared or sent.`,
+    )
+  }
+}
+
 export async function prepareEvmDeployment({ provider, network, values, account, artifact }) {
   const chain = await provider.getNetwork()
   if (!isSupportedEvmChain(network, chain.chainId)) {
     throw new Error(`Connected wallet is on chain ${chain.chainId}; switch to ${network.name} before reviewing.`)
   }
+  await verifyEvmNetworkIdentity(provider, network)
   const signer = await provider.getSigner()
   const signerAddress = await signer.getAddress()
   if (signerAddress.toLowerCase() !== account.toLowerCase()) {
@@ -45,6 +62,7 @@ export async function deployEvmToken({ provider, network, draft, artifact, onSub
   if (!isSupportedEvmChain(network, chain.chainId)) {
     throw new Error(`Wallet network changed. Select ${network.name} and review again.`)
   }
+  await verifyEvmNetworkIdentity(provider, network)
   const signer = await provider.getSigner()
   const signerAddress = await signer.getAddress()
   if (signerAddress.toLowerCase() !== draft.account.toLowerCase()) {

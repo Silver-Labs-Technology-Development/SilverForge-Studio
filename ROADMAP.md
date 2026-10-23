@@ -6,6 +6,9 @@ simulated test is not evidence of a live public-chain deployment or an audit.
 ## Implemented in this preview
 
 - Static Vite app with relative-path build output for project-site hosting.
+- Experimental, local-only BTCS L2 EVM profile with chain and client identity
+  checks before transaction preparation and again before wallet signing. No
+  public L2 deployment or live-node integration is claimed.
 - Wallet-authorized fixed-supply ERC-20 deployment flow for Ethereum and
   BNB Smart Chain, with matching testnet choices.
 - Solana classic SPL mint, associated token account, initial mint, and
@@ -30,8 +33,9 @@ simulated test is not evidence of a live public-chain deployment or an audit.
 - User-friendly storage-provider adapters that do not embed provider secrets.
 - Optional token-registry metadata integration after the relevant registry and
   indexing requirements are selected.
-- BTCS L2 adapter only after chain identity, fee handling, contract profiles,
-  wallet connection, and deployment tests are implemented and reviewed.
+- Verify the local BTCS L2 adapter against an isolated running BTCS L2 node,
+  including fee handling, wallet switching, and deployment on development
+  funds. Do not add public-network support until those checks and a review pass.
 - SilvEx contextual handoff only when a real supported destination and network
   are available. Centralized and decentralized exchange functionality remain
   distinct integrations.

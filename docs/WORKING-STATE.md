@@ -22,9 +22,12 @@ organization-owned private repository and branch before remote setup.
   Instruction layouts are serialized from protocol fields; tests verify
   program IDs, instruction data/accounts, cluster verification, wallet
   signature handoff, and temporary secret cleanup against a local RPC fixture.
-- The focused test suite passes 7/7, the static build succeeds, and `npm audit`
-  reports no known vulnerabilities for the pinned dependency tree at the time
-  of this check. Live wallet/network use has not been tested.
+- The experimental BTCS L2 profile points only to `127.0.0.1:8545` and requires
+  chain ID 31337 plus the `BTCSL2/` client identity before review and again
+  before signing. Its identity checks are unit-tested; deployment against a
+  running BTCS L2 node has not been tested.
+- The focused test suite passes 12/12 and the static build succeeds. Live
+  wallet/network use has not been tested.
 - No browser-wallet extension test against public Ethereum, BNB, or Solana
   infrastructure has been run. No live-chain deployment is claimed.
 - The local workspace contains a BTCS L2 v1.6 technical whitepaper but no

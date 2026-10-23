@@ -1,9 +1,10 @@
 # SilverForge Studio
 
 SilverForge Studio is a static, non-custodial developer preview for creating a
-fixed-supply EVM token on Ethereum or BNB Smart Chain and a classic SPL token
-with Metaplex metadata on Solana. BTCS L2 is not integrated; the network is
-explicitly marked as under development.
+fixed-supply EVM token on Ethereum or BNB Smart Chain, a classic SPL token
+with Metaplex metadata on Solana, and an experimental local BTCS L2 EVM
+adapter. BTCS L2 support is limited to a local development node; it is not a
+public network or production integration.
 
 **Current status:** implementation prototype. Local build and simulated/local
 tests do not establish live public-network deployment, security certification,
@@ -31,9 +32,14 @@ instruction layouts; no public chain deployment is claimed by these tests.
 ## What the frontend does
 
 - Connects to an injected EVM wallet or compatible injected Solana wallet.
-- Supports Ethereum, Sepolia, BNB Smart Chain, BSC Testnet, Solana Mainnet, and
-  Solana Devnet. Mainnet choices are clearly called out as real-fund
-  transactions; testnets are recommended.
+- Supports Ethereum, Sepolia, BNB Smart Chain, BSC Testnet, Solana Mainnet,
+  Solana Devnet, and an experimental local BTCS L2 development node. Mainnet
+  choices are clearly called out as real-fund transactions; testnets are
+  recommended.
+- The local BTCS L2 option targets `http://127.0.0.1:8545` and requires chain
+  ID 31337 plus a `BTCSL2/` client identity before transaction preparation and
+  again before signing. It has no explorer link and is not tested against a
+  running BTCS L2 node in this repository.
 - Compiles a minimal OpenZeppelin ERC-20 implementation with fixed initial
   supply and no owner, mint, pause, or upgrade authority. The same interface is
   BEP-20-compatible when deployed on BNB Smart Chain.
@@ -96,9 +102,10 @@ the source repository public as a shortcut.
   creator.
 - **SilvEx** is a separate planned exchange destination. No trade, swap,
   market, or CEX/DEX endpoint is linked because none has been verified.
-- **BTCS L2** integration is under development and disabled in the network
-  selector. ERC-20/BEP-20 compatibility does not mean an Ethereum or BNB
-  deployment is a BTCS L2 token.
+- **BTCS L2** is available only as an experimental local development adapter.
+  No public BTCS L2 deployment is supported or verified. ERC-20/BEP-20
+  compatibility does not mean an Ethereum or BNB deployment is a BTCS L2
+  token.
 - **Silver Scan** is not yet linked as an explorer destination. Result links
   point only to the actual selected network's public explorer.
 

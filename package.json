@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Static, non-custodial token creation frontend for Ethereum, BNB Smart Chain and Solana.",
+  "description": "Static, non-custodial token creation frontend for Ethereum, BNB Smart Chain, Solana and local BTCS L2 development.",
   "engines": {
     "node": ">=20.18.0"
   },

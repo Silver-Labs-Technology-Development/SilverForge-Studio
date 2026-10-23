@@ -15,12 +15,16 @@ must be public for wallets and indexers to retrieve it.
 | Ethereum | OpenZeppelin fixed-supply ERC-20 | Injected EVM wallet / ETH | Implemented; local EVM deployment test, not live-network verified |
 | BNB Smart Chain | Same ERC-20 bytecode, BEP-20-compatible interface | Injected EVM wallet / BNB | Implemented; local EVM deployment test, not live-network verified |
 | Solana | Classic SPL mint, ATA, initial supply, immutable Metaplex metadata | Injected Solana wallet / SOL | Implemented; local RPC construction/signature tests, not live-network verified |
-| BTCS L2 | No adapter in this app | No wallet or fee integration | Under development; deliberately unavailable |
+| BTCS L2 local | OpenZeppelin fixed-supply ERC-20 profile | Injected EVM wallet / local BTCS fee token | Experimental local adapter; identity-gated, no running-node integration test |
 
 EVM network IDs are checked against the selected chain before fee estimation
 and checked again before signing. Solana RPC genesis hashes are checked so a
 custom RPC endpoint cannot silently change the cluster behind the selected
-network label. Explorer URLs are generated from the selected network record.
+network label. The BTCS L2 local adapter additionally requires `net_version`
+31337 and a `web3_clientVersion` beginning with `BTCSL2/` before preparing or
+sending a transaction. It targets `http://127.0.0.1:8545`, has no explorer
+link, and must not be mistaken for a public testnet or mainnet. Explorer URLs
+are generated from the selected network record when one is configured.
 
 ## EVM token contract
 
@@ -49,5 +53,5 @@ persisted. JavaScript does not provide guaranteed secure memory erasure.
 SilverForge has no exchange feature. SilvEx is a separate planned destination;
 this app does not show markets, trade buttons, or invented exchange endpoints.
 SilverPay remains the unified wallet product and is not embedded as a second
-signer here. Future BTCS L2 connection must not be described as Ethereum,
-BNB, or Solana deployment.
+signer here. The local BTCS L2 profile is a separate experimental deployment
+target; it must not be described as Ethereum, BNB, or Solana deployment.
