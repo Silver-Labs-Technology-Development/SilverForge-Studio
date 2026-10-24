@@ -2,16 +2,18 @@
 
 ## Repository and provenance
 
-The local workspace and the Silver Labs organization repository search did not
-find an independently maintained SilverForge repository. The existing
-implementation was in `btcs-core/src/qt/silverforgepage.*` (a UI skeleton) and
-`btcs-l2/studio` plus `services/asset-service` (a backend-dependent local
-asset engine). Those implementations were left intact. This standalone static
-frontend is new and does not copy or replace the L2 asset engine or Qt code.
+Earlier workspace searches found related implementations in
+`btcs-core/src/qt/silverforgepage.*` (a UI skeleton) and `btcs-l2/studio` plus
+`services/asset-service` (a backend-dependent local asset engine). Those
+implementations were left intact. This standalone static frontend was created
+separately and does not copy or replace the L2 asset engine or Qt code.
 
-This new directory is a local engineering checkout only. It has not been
-published or pushed. An authorized maintainer must confirm the approved
-organization-owned private repository and branch before remote setup.
+This directory is now the public
+`Silver-Labs-Technology-Development/SilverForge-Studio` repository checkout.
+The `silverforge-development` branch is published, and the `gh-pages`
+branch is published at `6b27ea4`. GitHub Pages is enabled from
+`gh-pages` despite the earlier disabled policy, so the owner must confirm
+whether the preview is approved.
 
 ## Scope and evidence
 
@@ -36,5 +38,7 @@ organization-owned private repository and branch before remote setup.
 
 ## Release and access
 
-GitHub Actions CI is added for build/test only. GitHub Pages deployment and
-source visibility remain unchanged and disabled pending explicit approval.
+GitHub Actions CI is added for build/test only. The source repository is
+public. GitHub Pages is currently enabled from `gh-pages`; this conflicts with
+the earlier disabled policy and requires an owner decision to keep or disable
+the preview.

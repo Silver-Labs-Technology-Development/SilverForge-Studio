@@ -8,8 +8,12 @@ public network or production integration.
 
 **Current status:** implementation prototype. Local build and simulated/local
 tests do not establish live public-network deployment, security certification,
-or production readiness. The GitHub Pages deployment workflow is intentionally
-not enabled; the owner has not yet approved public publication.
+or production readiness. The source repository is public. GitHub Pages is
+currently enabled from the `gh-pages` branch and serves the static preview at
+<https://silver-labs-technology-development.github.io/SilverForge-Studio/>.
+The earlier repository policy said publishing was disabled pending owner
+approval; no approval record was found, so that policy mismatch needs an owner
+decision. The source workflow does not deploy.
 
 ## Run locally
 
@@ -59,8 +63,8 @@ to hardware-backed or operating-system key isolation.
 
 ## Static-hosting and storage boundary
 
-If GitHub Pages is enabled after separate approval, it will serve only the
-built static files. This repository does not
+The live GitHub Pages preview serves only the built static files. This
+repository does not
 contain a private API, persistent database, logo upload service, or provider
 credential. EVM RPC requests use the connected wallet's configured provider.
 Solana uses the displayed public cluster endpoint by default and lets the user
@@ -90,11 +94,12 @@ validates form and network boundaries, executes the EVM deployment against an
 isolated EthereumJS VM, and tests Solana transaction construction/signing
 against a local RPC fixture.
 
-The GitHub Actions workflow in this local source tree runs tests and builds on
-pushes and pull requests. It does **not** deploy or enable Pages. After the owner separately
-approves public publishing, an authorized maintainer must configure the
-repository's Pages source and add a reviewed deployment workflow. Do not make
-the source repository public as a shortcut.
+The GitHub Actions workflow runs tests and builds on pushes and pull requests.
+It does **not** deploy or enable Pages. Pages currently uses the legacy
+`gh-pages` branch, which contains a checked-in build and tracked
+`node_modules`; this is not a reviewed deployment workflow. The owner should
+either approve and replace it with an Actions artifact deployment or disable
+Pages. Do not treat the preview as a production release.
 
 ## Ecosystem boundaries
 
