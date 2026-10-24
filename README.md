@@ -33,6 +33,21 @@ isolated EthereumJS VM. Solana tests construct and sign a transaction against
 a local JSON-RPC fixture and assert the classic Token Program and Metaplex
 instruction layouts; no public chain deployment is claimed by these tests.
 
+Optional live local BTCS L2 check (requires a disposable node started with
+`--dev-sequencer`):
+
+```sh
+BTCS_L2_RPC_URL=http://127.0.0.1:8545 \
+BTCS_L2_DEV_PRIVATE_KEY=<documented local harness fixture> npm test
+```
+
+This adds a real ERC-20 deployment and read-back: 17/17 tests pass. Without
+the two environment variables the live case is skipped (16 pass, 1 skip). The
+harness key is the public development fixture in
+`btcs-l2/execution/evm/src/config.ts`; it is used only against the disposable
+local chain. The node rejects the `pending` block tag, so the live test reads
+the nonce from `latest` explicitly.
+
 ## What the frontend does
 
 - Connects to an injected EVM wallet or compatible injected Solana wallet.
@@ -42,8 +57,9 @@ instruction layouts; no public chain deployment is claimed by these tests.
   recommended.
 - The local BTCS L2 option targets `http://127.0.0.1:8545` and requires chain
   ID 31337 plus a `BTCSL2/` client identity before transaction preparation and
-  again before signing. It has no explorer link and is not tested against a
-  running BTCS L2 node in this repository.
+  again before signing. It has no explorer link. An optional live local test
+  compiles, deploys, mines, and reads back an ERC-20 contract on a running
+  disposable node; public BTCS L2 deployment is still unsupported.
 - Compiles a minimal OpenZeppelin ERC-20 implementation with fixed initial
   supply and no owner, mint, pause, or upgrade authority. The same interface is
   BEP-20-compatible when deployed on BNB Smart Chain.

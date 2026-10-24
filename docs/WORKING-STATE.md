@@ -26,10 +26,15 @@ whether the preview is approved.
   signature handoff, and temporary secret cleanup against a local RPC fixture.
 - The experimental BTCS L2 profile points only to `127.0.0.1:8545` and requires
   chain ID 31337 plus the `BTCSL2/` client identity before review and again
-  before signing. Its identity checks are unit-tested; deployment against a
-  running BTCS L2 node has not been tested.
-- The focused test suite passes 12/12 and the static build succeeds. Live
-  wallet/network use has not been tested.
+  before signing. Its identity checks are unit-tested. With
+  `BTCS_L2_RPC_URL` and the documented harness key, a live test compiles,
+  deploys, mines, and reads back a real ERC-20 contract on a disposable local
+  node.
+- The focused test suite passes 17/17 with that live local node and harness
+  key; without them it passes 16/16 with the live case skipped. The static
+  build succeeds. No browser-wallet extension test against public Ethereum,
+  BNB, or Solana infrastructure has been run, and no live public-chain
+  deployment is claimed.
 - No browser-wallet extension test against public Ethereum, BNB, or Solana
   infrastructure has been run. No live-chain deployment is claimed.
 - The local workspace contains a BTCS L2 v1.6 technical whitepaper but no

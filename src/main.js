@@ -402,7 +402,12 @@ async function confirmDeployment() {
     }
     renderResult(network, result)
     state.pendingHash = null
-    setStatus('Deployment confirmed by the selected network. Verify the address in the explorer.', 'success')
+    setStatus(
+      network.localDevelopment
+        ? 'Deployment confirmed by the local BTCS L2 node. Re-read the contract from the node to verify it; no explorer is configured for this network.'
+        : 'Deployment confirmed by the selected network. Verify the address in the explorer.',
+      'success',
+    )
   } catch (error) {
     const hash = error.transactionHash ?? state.pendingHash
     if (hash) {
@@ -410,10 +415,13 @@ async function confirmDeployment() {
       resultPanel.replaceChildren()
       const label = document.createElement('strong')
       label.textContent = 'Transaction submitted; confirmation needs attention'
-      const link = document.createElement('a')
-      link.href = explorerUrl(network, 'tx', hash)
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
+      const txUrl = explorerUrl(network, 'tx', hash)
+      const link = txUrl ? document.createElement('a') : document.createElement('code')
+      if (txUrl) {
+        link.href = txUrl
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
+      }
       link.textContent = hash
       resultPanel.append(label, link)
       resultPanel.classList.remove('hidden')
