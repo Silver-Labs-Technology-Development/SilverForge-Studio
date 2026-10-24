@@ -46,7 +46,9 @@ the two environment variables the live case is skipped (16 pass, 1 skip). The
 harness key is the public development fixture in
 `btcs-l2/execution/evm/src/config.ts`; it is used only against the disposable
 local chain. The node rejects the `pending` block tag, so the live test reads
-the nonce from `latest` explicitly.
+the nonce from `latest` explicitly. Use a **fresh data directory** for each
+live run: a reused node with leftover pending transactions can reject the
+nonce even when the latest nonce looks correct.
 
 ## What the frontend does
 
